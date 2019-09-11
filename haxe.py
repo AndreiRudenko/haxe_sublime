@@ -20,7 +20,6 @@ _haxe_ = None
 
 # based on https://github.com/snowkit/sublime_haxe and https://github.com/snowkit/sublime_flow by Sven Bergström
 
-
 class HaxeProject(sublime_plugin.EventListener):
 
     def __init__(self):
@@ -286,7 +285,7 @@ def force_reload():
                 pass
 
     #only use this when developing
-# force_reload()
+force_reload()
 
 from .haxe_set_hxml import HaxeSetHxml
 from .haxe_build import HaxeBuild
