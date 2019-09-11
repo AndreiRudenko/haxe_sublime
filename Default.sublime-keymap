@@ -1,0 +1,78 @@
+[
+    {
+        "keys": ["ctrl+shift+0"],
+        "command": "flow_show_status",
+        "context":
+        [
+            {
+                "key": "selector",
+                "operator": "equal",
+                "operand": "source.haxe,source.flow,source.hxml"
+            }
+        ]
+    },
+    {
+        "keys": ["ctrl+shift+9"],
+        "command": "flow_set_project_file",
+        "context":
+        [
+            {
+                "key": "selector",
+                "operator": "equal",
+                "operand": "source.flow, source.hxml"
+            }
+        ]
+    },
+    {
+        "keys": ["ctrl+shift+8"],
+        "command": "flow_set_target_build",
+        "context":
+        [
+            {
+                "key": "selector",
+                "operator": "equal",
+                "operand": "source.flow,source.haxe"
+            }
+        ]
+    },
+    {
+        "keys": ["ctrl+i"],
+        "command": "haxe_generate_import",
+        "context":
+        [
+            {
+                "key": "selector",
+                "operator": "equal",
+                "operand": "source.haxe"
+            }
+        ]
+    },
+    {
+        "keys": ["("],
+        "command": "chained_actions",
+        "args": {
+            "actions":["insert_snippet","auto_complete"],
+            "args":[{"contents": "("},{}]
+        },
+        "context": [
+            { "key": "selector", "operator": "equal", "operand": "source.haxe" },
+            { "key": "selection_empty", "operator": "equal", "operand": true, "match_all": true },
+            { "key": "setting.auto_match_enabled", "operator": "equal", "operand": false },
+            { "key": "preceding_text", "operator": "not_regex_contains", "operand": "(if|switch|function)", "match_all": true }
+        ]
+    },
+    {
+        "keys": ["("],
+        "command": "chained_actions",
+        "args": {
+            "actions":["insert_snippet","auto_complete"],
+            "args":[{"contents": "($0)"},{}]
+        },
+        "context": [
+            { "key": "selector", "operator": "equal", "operand": "source.haxe" },
+            { "key": "selection_empty", "operator": "equal", "operand": true, "match_all": true },
+            { "key": "setting.auto_match_enabled", "operator": "equal", "operand": true },
+            { "key": "preceding_text", "operator": "not_regex_contains", "operand": "(if|switch|function)", "match_all": true }
+        ]
+    }
+]

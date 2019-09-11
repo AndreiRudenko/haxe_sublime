@@ -1,0 +1,3 @@
+[
+   { "id": "haxe-set-hxml", "command": "haxe_set_hxml", "caption": "Set as current hxml project" },
+]

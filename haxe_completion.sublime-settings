@@ -1,0 +1,12 @@
+{
+
+	// Sets a path to find haxe.
+	"haxe_path" : "haxe",
+
+	// A integer for the port to host the completion server on
+	"server_port" : 6110,
+
+	// Stdin completion instead of file saving
+	"stdin_completion" : true
+
+}

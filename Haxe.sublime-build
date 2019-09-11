@@ -1,0 +1,5 @@
+{
+    "target": "haxe_build",
+    "file_regex" : "(?:(?:(^.*[.]hx):([0-9]+): (?:characters|lines) (?:\\d+(-)?\\d+)) +:(.+))",
+    "selector": "source.haxe, source.hxml"
+}
