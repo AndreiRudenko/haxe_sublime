@@ -38,7 +38,7 @@ class HaxeBuild(ExecCommand):
         super(HaxeBuild, self).run( 
                 cmd= None, 
                 shell_cmd= " ".join(cmd),
-                # file_regex= file_regex, 
+                file_regex= file_regex, 
                 line_regex= line_regex, 
                 working_dir= working_dir, 
                 encoding= encoding, 
