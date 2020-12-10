@@ -23,18 +23,31 @@ _haxe_ = None
 class HaxeProject(sublime_plugin.EventListener):
 
     def __init__(self):
-
         global _haxe_
         _haxe_ = self
 
         self.hxml_file = ""
         self.hxml_data = None
         self.hxml_args = None
+        skip_scope_list = [
+            "keyword.control.directive.conditional", 
+            "keyword.operator.comparison", 
+            "punctuation.definition.tag", 
+            "punctuation.definition.block.begin", 
+            "punctuation.accessor", 
+            "punctuation.terminator", 
+            "storage.type.variable", 
+            "punctuation.definition.parameters.begin",
+            "constant.numeric.decimal"
+        ]
+
+        self.skip_scope = "source - (" + ", ".join(skip_scope_list) + ")"
+
+        # self.set_hxml_file("path\\to\\build.hxml") # used in dev
 
         print("[haxe] __init__")
 
     def set_hxml_file(self, file_name):
-
         if not file_name:
             print("[haxe] can't set hxml file" + str(file_name))
             return
@@ -47,7 +60,6 @@ class HaxeProject(sublime_plugin.EventListener):
         self.refresh_info()
 
     def refresh_info(self):
-
         print("[haxe] refresh hxml on " + self.hxml_file)
 
         with open(self.hxml_file, 'r') as data:
@@ -56,7 +68,6 @@ class HaxeProject(sublime_plugin.EventListener):
         self.hxml_args = self.parse_hxml(self.hxml_data)
 
     def parse_hxml(self, data):
-
         lines = data.splitlines()
         _list = []
 
@@ -70,7 +81,6 @@ class HaxeProject(sublime_plugin.EventListener):
         return _list
 
     def on_query_completions(self, view, prefix, locations):
-
         # print("[haxe] on_query_completions ")
         scope = view.scope_name(locations[0])
 
@@ -96,8 +106,11 @@ class HaxeProject(sublime_plugin.EventListener):
 
         return
 
-    def get_haxe_completions(self, view, offset):
+    def get_last_string(self, view, offset):
+        pass
 
+
+    def get_haxe_completions(self, view, offset):
         # print("[haxe] completion ")
         if self.hxml_file == "" or self.hxml_file is None:
             sublime.status_message("No hxml file, right click in a hxml file! {}".format(str(self.hxml_file)))
@@ -109,24 +122,43 @@ class HaxeProject(sublime_plugin.EventListener):
             self.refresh_info()
 
         #ignore strings, comments, #if conditionals, for some reason the triggers won't work
-        ifsel = view.sel()[0]
-        ifsel.a -= 2; ifsel.b -= 2
         scsel = view.sel()[0]
-
-        ifdef_score = view.score_selector(ifsel.begin(), "source - (keyword.control.directive.conditional.haxe, punctuation.definition.tag)") 
         scope_score = view.score_selector(scsel.begin(), "source - (comment, string.quoted, keyword.control.directive.conditional.haxe)") 
+
+        if scope_score <= 0:
+            print('[haxe] ignore invalid scope for completion1')
+            return None
+
+        c_found = False
+        ifsel = view.sel()[0]
+        ifsel.a -=3
+        ifsel.b -=2
+
+        pch = ' '
+        while ifsel.a > 0 and not c_found:
+            pch = view.substr(ifsel)
+            if pch != ' ' and pch != '\t' and pch != '\n' and pch != '\n':
+                c_found = True
+            ifsel.a -=1
+            ifsel.b -=1
+
+        ifsel.a +=1
+        ifdef_score = view.score_selector(ifsel.begin(), self.skip_scope)
+       
         # print('[haxe] ifdef score `{}`'.format(str(ifdef_score)))
         # print('[haxe] scope score `{}`'.format(str(scope_score)))
+        # print('[haxe] scope name ifsel.begin`{}`'.format(str(view.scope_name(ifsel.begin()))))
+        # print('[haxe] scope name scsel.begin`{}`'.format(str(view.scope_name(scsel.begin()))))
 
-        if scope_score <= 0 or ifdef_score <= 0:
-            print('[haxe] ignore invalid scope for completion')
+        if ifdef_score <= 0:
+            print('[haxe] ignore invalid scope for completion2')
             return None
 
         sel = view.sel()[0]; sel.a -= 1
         ch = view.substr(sel)
 
         if ch != "." and ch != "(":
-            # print('[haxe] ignore completion by non . or (')
+            print('[haxe] ignore completion by non . or (')
             return []
 
         mode = ""
@@ -135,18 +167,17 @@ class HaxeProject(sublime_plugin.EventListener):
             sel.a -=1;
             sel.b -=1;
             ch = view.substr(sel)
-            # ignore multiple dots case
             if ch == ".":
-                print('[haxe] ignore completion')
-                return []
+                print('[haxe] ignore double dot completion')
+                return None
+            elif ch == "(" or ch == "{" or ch == "<":
+                print('[haxe] ignore open parenthesis completion')
+                return None
         elif ch == "(":
             mode = "@type"
+            offset -=2
         else:
             return []
-
-        if ch == "(":
-            mode = "@type"
-            offset = offset-2
 
         cwd = self.get_working_dir()
         filename = view.file_name()
@@ -189,7 +220,6 @@ class HaxeProject(sublime_plugin.EventListener):
         return haxe_completion_list(result)
 
     def show_errors(self, view, errs):
-        
         if not errs:
             return None
 
@@ -224,7 +254,6 @@ class HaxeProject(sublime_plugin.EventListener):
         return None
 
     def save_file_for_completion( self, view, fname ):
-
         folder = os.path.dirname(fname)
         filename = os.path.basename( fname )
         temp_file = os.path.join( folder , "." + filename + ".tmp" )
@@ -240,7 +269,6 @@ class HaxeProject(sublime_plugin.EventListener):
         print("[haxe] saved file for completion")
 
     def restore_file_post_completion( self, fname ):
-
         print("[haxe] restore file post completion")
 
         folder = os.path.dirname( fname )
