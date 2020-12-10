@@ -139,6 +139,7 @@ class HaxeProject(sublime_plugin.EventListener):
             pch = view.substr(ifsel)
             if pch != ' ' and pch != '\t' and pch != '\n' and pch != '\n':
                 c_found = True
+                break
             ifsel.a -=1
             ifsel.b -=1
 
