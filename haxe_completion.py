@@ -7,7 +7,6 @@ from subprocess import Popen, PIPE
 
 import sublime, sublime_plugin
 
-
 #plugin location
 plugin_file = __file__
 plugin_filepath = os.path.realpath(plugin_file)
@@ -42,11 +41,12 @@ class HaxeCompletion( sublime_plugin.EventListener ):
         _haxe_completion_ = self
 
         self.process = None
+        self.haxe_path = "haxe"
+        self.port = 6110
 
         print("[haxe_completion] __init__")
 
     def init(self, forced=False):
-
         if not forced:
             if self.process is not None:
                 return;
@@ -85,7 +85,6 @@ class HaxeCompletion( sublime_plugin.EventListener ):
             return None
 
     def complete(self, cwd='', fname='', offset=0, mode='', hxml=[]):
-
         print("[haxe_completion] complete")
 
         self.init()
@@ -121,12 +120,11 @@ class HaxeCompletion( sublime_plugin.EventListener ):
         return _result
 
     def complete_stdin(self, cwd='', fname='', fdata='', offset=0, mode='', hxml=[]):
-
         # print("[haxe_completion] complete stdin")
 
         self.init()
         args = "--cwd " + cwd + "\n" + "--display " + fname + "@" + str(offset) + mode + "\n" + "-D display-stdin" + "\n" + "\n".join(hxml)
-
+       
         socket = py_socket()
         socket.connect(('localhost', self.port))
         socket.send(bytes(args, 'utf-8'));
@@ -160,7 +158,6 @@ class HaxeCompletion( sublime_plugin.EventListener ):
         self.init()
 
     def shutdown(self, forced=False):
-
         if(forced == False):
             print("[haxe_completion] shutdown")
 
@@ -172,13 +169,11 @@ class HaxeCompletion( sublime_plugin.EventListener ):
         self.process = None
 
 def run_process( args ):
-
     _proc = run_process_bg(args)
     data = _proc.communicate()[0]
     return _proc, data
 
 def run_process_bg( args ):
-
     _proc = None
     #this shell_cmd is not used by windows
     shell_cmd = ""

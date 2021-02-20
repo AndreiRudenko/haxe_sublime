@@ -36,6 +36,7 @@ class HaxeProject(sublime_plugin.EventListener):
             "punctuation.definition.block.begin", 
             "punctuation.accessor", 
             "punctuation.terminator", 
+            "punctuation.separator.comma", 
             "storage.type.variable", 
             "punctuation.definition.parameters.begin",
             "constant.numeric.decimal"
@@ -106,10 +107,6 @@ class HaxeProject(sublime_plugin.EventListener):
 
         return
 
-    def get_last_string(self, view, offset):
-        pass
-
-
     def get_haxe_completions(self, view, offset):
         # print("[haxe] completion ")
         if self.hxml_file == "" or self.hxml_file is None:
@@ -131,20 +128,23 @@ class HaxeProject(sublime_plugin.EventListener):
 
         c_found = False
         ifsel = view.sel()[0]
-        ifsel.a -=3
-        ifsel.b -=2
+        # ifsel.a -=3
+        # ifsel.b -=2
+        ifsel.a -=2
+        ifsel.b -=1
 
         pch = ' '
         while ifsel.a > 0 and not c_found:
             pch = view.substr(ifsel)
-            if pch != ' ' and pch != '\t' and pch != '\n' and pch != '\n':
+            if pch != ' ' and pch != '\t' and pch != '\n' and pch != '\r':
                 c_found = True
                 break
+
             ifsel.a -=1
             ifsel.b -=1
-
-        ifsel.a +=1
+            
         ifdef_score = view.score_selector(ifsel.begin(), self.skip_scope)
+        # ifdef_score = view.score_selector(ifsel.b, self.skip_scope)
        
         # print('[haxe] ifdef score `{}`'.format(str(ifdef_score)))
         # print('[haxe] scope score `{}`'.format(str(scope_score)))
@@ -291,10 +291,10 @@ class HaxeProject(sublime_plugin.EventListener):
 
 
 # http://stackoverflow.com/a/10863489/2503795
-class ChainedActionsCommand(sublime_plugin.TextCommand):
-    def run(self, edit, actions, args):
-        for i, action in enumerate(actions):
-            self.view.run_command(action, args[i])
+# class ChainedActionsCommand(sublime_plugin.TextCommand):
+#     def run(self, edit, actions, args):
+#         for i, action in enumerate(actions):
+#             self.view.run_command(action, args[i])
 
 def force_reload():
     modules_to_load = [
@@ -314,7 +314,7 @@ def force_reload():
                 pass
 
     #only use this when developing
-force_reload()
+# force_reload()
 
 from .haxe_set_hxml import HaxeSetHxml
 from .haxe_build import HaxeBuild
