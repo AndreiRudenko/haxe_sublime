@@ -1,7 +1,5 @@
 import sublime, sublime_plugin
 
-
-
 class HaxeSetHxml(sublime_plugin.WindowCommand):
 
     def run(self):
@@ -12,6 +10,7 @@ class HaxeSetHxml(sublime_plugin.WindowCommand):
 
     def is_visible(self):
 
+        # print("[haxe] is_visible")
         view = self.window.active_view()
         pt = view.sel()[0].b
         scope = view.scope_name(pt)

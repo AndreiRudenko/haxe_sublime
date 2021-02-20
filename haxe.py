@@ -46,7 +46,7 @@ class HaxeProject(sublime_plugin.EventListener):
 
         # self.set_hxml_file("path\\to\\build.hxml") # used in dev
 
-        print("[haxe] __init__")
+        # print("[haxe] __init__")
 
     def set_hxml_file(self, file_name):
         if not file_name:
@@ -85,7 +85,7 @@ class HaxeProject(sublime_plugin.EventListener):
         # print("[haxe] on_query_completions ")
         scope = view.scope_name(locations[0])
 
-        is_haxe = 'source.haxe' in scope
+        is_haxe = 'source.hx' in scope
         is_hxml = 'source.hxml' in scope
 
         if not is_haxe and not is_hxml:
@@ -152,7 +152,7 @@ class HaxeProject(sublime_plugin.EventListener):
         # print('[haxe] scope name scsel.begin`{}`'.format(str(view.scope_name(scsel.begin()))))
 
         if ifdef_score <= 0:
-            print('[haxe] ignore invalid scope for completion2')
+            print('[haxe] ignore invalid scope for completion')
             return None
 
         sel = view.sel()[0]; sel.a -= 1
